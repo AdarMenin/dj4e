@@ -27,10 +27,10 @@ SITE_ROOT = os.path.join(BASE_DIR, "site")
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("home.urls")),
-    path("account/", include("django.contrib.auth.urls")),
+    path("accounts/", include("django.contrib.auth.urls")),
     path("hello/", include("hello.urls")),
-    path("polls/", include("polls.urls")),
-    path("autos/", include("autos.urls")),
+    path("polls/", include("polls.urls", namespace="polls")),
+    path("autos/", include("autos.urls", namespace="autos")),
     re_path(
         r"^site/(?P<path>.*)$",
         serve,
