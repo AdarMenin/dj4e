@@ -31,6 +31,7 @@ urlpatterns = [
     path("hello/", include("hello.urls")),
     path("polls/", include("polls.urls", namespace="polls")),
     path("autos/", include("autos.urls", namespace="autos")),
+    path("cats/", include("cats.urls", namespace="cats")),
     re_path(
         r"^site/(?P<path>.*)$",
         serve,
