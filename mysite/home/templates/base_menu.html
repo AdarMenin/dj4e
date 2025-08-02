@@ -21,7 +21,12 @@
                     <img style="width: 25px;" src="{{ user|gravatar:60 }}" /><b class="caret"></b>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="rightnavDropdown">
-                    <li><a class="dropdown-item" href="{% url 'logout' %}?next={% url 'ads:all' %}">Logout</a></li>
+                    <li>
+                        <form method="post" action="{% url 'logout' %}?next={% url 'ads:all' %}">
+                            {% csrf_token %}
+                            <button class="button btn-light col-12" type="submit">Logout</button>
+                        </form>
+                    </li>
                 </ul>
             </li>
             {% else %}
