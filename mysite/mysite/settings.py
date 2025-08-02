@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "hello.apps.HelloConfig",
     "autos.apps.AutosConfig",
     "cats.apps.CatsConfig",
+    "ads.apps.AdsConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -66,6 +67,9 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "home.context_processors.settings",  # Add
+                # "social_django.context_processors.backends",  # Add
+                # "social_django.context_processors.login_redirect",  # Add
             ],
         },
     },
