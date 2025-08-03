@@ -67,7 +67,7 @@ class AdCreateView(LoginRequiredMixin, View):
 
 
 class AdUpdateView(LoginRequiredMixin, View):
-    template_name = "ads/form.html"
+    template_name = "ads/ad_form.html"
     success_url = reverse_lazy("ads:all")
 
     def get(self, request, pk):
@@ -127,4 +127,4 @@ class CommentDeleteView(OwnerDeleteView):
     # https://stackoverflow.com/questions/26290415/deleteview-with-a-dynamic-success-url-dependent-on-id
     def get_success_url(self):
         ad = self.object.ad
-        return reverse("forums:forum_detail", args=[ad.id])
+        return reverse("ads:ad_detail", args=[ad.id])
