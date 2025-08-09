@@ -14,22 +14,34 @@ from ads.owner import (
     OwnerDeleteView,
 )
 from ads.forms import CreateForm, CommentForm
-
+from django.db.models import Q
 
 class AdListView(OwnerListView):
     model = Ad
     # By convention:
-    template_name = "ads/Ad_list.html"
+    template_name = "ads/ad_list.html"
 
     def get(self, request):
-        ad_list = Ad.objects.all()
+        strval = request.GET.get("search", False)
+        if strval:
+            query = Q(title__icontains=strval)
+            query.add(Q(text__icontains=strval), Q.OR)
+            ad_list = (
+                Ad.objects.filter(query)
+                .select_related()
+                .distinct()
+                .order_by("-updated_at")[:10]
+            )
+        else:
+            ad_list = Ad.objects.all().order_by('-updated_at')[:10]
+
         favorites = list()
         if request.user.is_authenticated:
             # rows = [{'id': 2}, {'id': 4} ... ]  (A list of rows)
             rows = request.user.favorite_ads.values("id")
             # favorites = [2, 4, ...] using list comprehension
             favorites = [row["id"] for row in rows]
-        ctx = {"ad_list": ad_list, "favorites": favorites}
+        ctx = {"ad_list": ad_list, "favorites": favorites, "search": strval}
         return render(request, self.template_name, ctx)
 
 
@@ -148,10 +160,13 @@ from django.db.utils import IntegrityError
 
 @method_decorator(csrf_exempt, name="dispatch")
 class AddFavoriteView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
     def post(self, request, pk):
         print("Add PK", pk)
         ad = get_object_or_404(Ad, id=pk)
-        fav = Fav(user=request.user, thing=ad)
+        fav = Fav(user=request.user, ad=ad)
         try:
             fav.save()  # In case of duplicate key
         except IntegrityError:
@@ -161,6 +176,9 @@ class AddFavoriteView(LoginRequiredMixin, View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class DeleteFavoriteView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)
+
     def post(self, request, pk):
         print("Delete PK", pk)
         ad = get_object_or_404(Ad, id=pk)
